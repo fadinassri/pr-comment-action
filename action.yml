@@ -1,0 +1,18 @@
+name: 'PR Commenter'
+description: 'Adds a comment to a pull request'
+author: 'Fadi Nassri'
+branding:
+  icon: 'message-circle'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token for authentication'
+    required: true
+  comment:
+    description: 'Comment to add to the PR'
+    required: true
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
