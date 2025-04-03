@@ -1,118 +1,99 @@
 # PR Commenter GitHub Action
 
-This GitHub Action automatically adds a comment to a pull request.
+This GitHub Action adds a comment to a pull request.
 
 ## 🚀 Usage
 
-To use this action in your workflow, add the following step to your `.github/workflows/workflow.yml` file:
+To use this action, add the following step in your GitHub workflow:
 
 ```yaml
 - name: Add PR Comment
-  uses: your-github-username/pr-comment-action@v1
+  uses: fadinassri/pr-comment-action@v2.0.0
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     comment: 'Hello, this is an automated comment!'
 ```
 
----
+## 🔧 Inputs
 
-## 📥 Inputs
-
-| Name          | Description                      | Required |
-|--------------|----------------------------------|----------|
-| `github-token` | GitHub token for authentication | ✅ Yes |
-| `comment`    | The comment to add to the PR    | ✅ Yes |
+| Name            | Description                      | Required |
+|-----------------|----------------------------------|----------|
+| `github-token`  | GitHub token for authentication  | ✅ Yes   |
+| `comment`       | The comment to add to the PR     | ✅ Yes   |
 
 ---
 
-## 📤 Outputs
+## 🔥 Working Example
 
-This action does not produce any outputs. It simply adds a comment to a pull request.
-
----
-
-## 🔧 Example Workflow
-
-Here’s an example of a full GitHub Actions workflow file:
+Here is a fully working minimal setup you can use:
 
 ```yaml
-name: PR Commenter
+name: CI
 
 on:
   pull_request:
-    types: [opened]
+    branches: [ "main" ]
 
 jobs:
-  comment:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write  # ✅ Required to add comments to PRs
+      contents: read         # ✅ Allows reading repository contents
+      issues: write          # ✅ (Optional) Helps if PRs are linked to issues
+
     steps:
-      - name: Add PR Comment
-        uses: fadinassri/pr-comment-action@v1
+      - name: Checkout repository
+        uses: actions/checkout@v4  # ✅ Ensures the workflow has the latest code
+
+      - name: PR Simple Commenter
+        uses: fadinassri/pr-comment-action@v2.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment: 'Thanks for opening this PR! 🎉'
+          comment: 'My first PR Test 🚀'
 ```
 
----
-
-## 🛠 Setup & Development
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-github-username/pr-comment-action.git
-   cd pr-comment-action
-   ```
-
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-
-3. Build the project:
-   ```sh
-   npm run build
-   ```
-
-4. Push changes:
-   ```sh
-   git add .
-   git commit -m "Your message"
-   git push origin main
-   ```
+**📝 Note:** Ensure that the `permissions` section is correctly set in your workflow file. The action requires `pull-requests: write` and `contents: read` to function properly. Without these permissions, the action may fail to add a comment to the PR.
 
 ---
 
-## 📦 Publishing to GitHub Marketplace
+## 🛠 Troubleshooting
 
-To publish this action to the GitHub Marketplace:
+### ❌ Error: Resource not accessible by integration
 
-1. **Tag a new release**  
-   ```sh
-   git tag -a v1.0.0 -m "First release"
-   git push origin v1.0.0
-   ```
-2. **Go to GitHub and create a release**  
-   - Navigate to your repository.
-   - Click **Releases** > **Draft a new release**.
-   - Use `v1.0.0` as the tag name.
-   - Click **Publish Release**.
+This happens when using `GITHUB_TOKEN` in a PR from a **forked repo**.
+
+### ✅ Solutions:
+
+#### ✅ Option 1: Use a Personal Access Token (PAT)
+
+If you receive the error above, use a **PAT** instead of `GITHUB_TOKEN`.
+
+1. Go to GitHub → **Settings** → **Developer settings** → **Personal access tokens**.
+2. Generate a classic token with scopes:
+   - `repo` (or `public_repo`)
+   - `workflow`
+3. Go to your repo → **Settings** → **Secrets and variables** → **Actions**.
+4. Add a secret named: `PAT_TOKEN`
+
+Then modify your workflow:
+
+```yaml
+- name: PR Simple Commenter
+  uses: fadinassri/pr-comment-action@v2.0.0
+  with:
+    github-token: ${{ secrets.PAT_TOKEN }}
+    comment: 'Hello from a secure token!'
+```
+
+#### ✅ Option 2: Enable Write Permissions for GITHUB_TOKEN
+
+Go to your repo → **Settings** → **Actions** → **General**  
+→ **Workflow permissions** → Select **Read and write permissions**
 
 ---
 
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
-
-## 💡 Contributing
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
-
----
-
-## ⭐ Acknowledgments
-
-- Built using [GitHub Actions](https://github.com/features/actions).
-- Uses [`@actions/core`](https://www.npmjs.com/package/@actions/core) and [`@actions/github`](https://www.npmjs.com/package/@actions/github).
 
