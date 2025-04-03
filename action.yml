@@ -1,4 +1,4 @@
-name: 'PR Commenter'
+name: 'PR Simple Commenter'
 description: 'Adds a comment to a pull request'
 author: 'Fadi Nassri'
 branding:
