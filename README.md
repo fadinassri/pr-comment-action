@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Add PR Comment
-        uses: your-github-username/pr-comment-action@v1
+        uses: fadinassri/pr-comment-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment: 'Thanks for opening this PR! 🎉'
